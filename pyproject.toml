@@ -1,11 +1,12 @@
 [project]
 name = "dev_utils"
-version = "0.0.1"
+version = "0.0.3"
 dynamic = ["dependencies"]
 
 [project.scripts]
-config = "dev_utils.src.config:print_envs"
-main = "dev_utils.src.main:main"
+#config = "dev_utils.src.config:print_envs"
+#main = "dev_utils.src.main:main"
+bump-ver = "dev_utils.src.utils.version:app"
 
 [tool.setuptools.dynamic]
 dependencies = { file = "requirements.txt" }

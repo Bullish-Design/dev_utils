@@ -30,7 +30,9 @@ def bump_version(current_version: str, bump_type: BumpType) -> str:
 
 @app.command()
 def bump(
-    file_path: Path = typer.Argument(..., help="Path to pyproject.toml file"),
+    file_path: Path = typer.Argument(
+        "pyproject.toml", help="Path to pyproject.toml file"
+    ),
     bump_type: BumpType = typer.Option(
         BumpType.PATCH, help="Version part to bump: major, minor, or patch"
     ),

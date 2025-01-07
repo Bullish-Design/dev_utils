@@ -8,6 +8,7 @@ dynamic = ["dependencies"]
 #main = "dev_utils.src.main:main"
 bump-ver = "dev_utils.src.utils.version:app"
 init-gen = "dev_utils.src.utils.python.init_gen:app"
+tmux-script = "dev_utils.src.utils.tmux.script:script"
 
 [tool.setuptools.dynamic]
 dependencies = { file = "requirements.txt" }

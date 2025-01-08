@@ -7,7 +7,6 @@ load_dotenv()
 # Constants: --------------------------------------------
 ENV_LOC = ".env"
 
-
 # Functions: --------------------------------------------
 
 
@@ -37,4 +36,14 @@ def load_envs(env_file):
 
 
 def print_envs():
-    load_envs(ENV_LOC)  # Import Variables: -------------------------------------
+    load_envs(ENV_LOC)
+
+
+# Import Variables: -------------------------------------
+
+ROOT = os.getenv("ROOT")
+MARKDOWN_DIR = os.getenv("MARKDOWN_DIR")
+SHELL_DIR = os.getenv("SHELL_DIR")
+PYTHON_DIR = os.getenv("PYTHON_DIR")
+DEV_SOCKET_ENVVAR_NAME = os.getenv("DEV_SOCKET_ENVVAR_NAME")
+NOTES_SOCKET_ENVVAR_NAME = os.getenv("NOTES_SOCKET_ENVVAR_NAME")

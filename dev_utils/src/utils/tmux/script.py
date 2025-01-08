@@ -5,6 +5,9 @@ import argparse
 from typing import List, Dict
 from dataclasses import dataclass
 from pydantic import BaseModel
+from time import sleep
+
+file_env_var = "ACTIVE_FILE"
 
 
 class TmuxBase(BaseModel):
@@ -104,44 +107,55 @@ def compare_objects(obj_list: List):
 def set_nvim_active_file_env_var(
     pane: Pane, env_var: str, value: str = "vim.fn.expand('%:p')"
 ):
-    lua_file_path_str = f"lua vim.env.{env_var} = string.format('%s', {value})"
+    lua_file_path_str = f":lua vim.env.{env_var} = string.format('%s', {value})"
     output = send_command_back_to_tmux(pane, lua_file_path_str)
     return output
 
 
+def add_rpc_servername_to_tmux_envvars(pane: Pane, pane_name: str):
+    command = f":lua vim.env.{pane_name} v:servername"
+
+
 def send_command_back_to_tmux(pane: Pane, command: str):
     #    #command = lua_file_path_str
-    build_command = f":{command}"
+    # build_command = f":{command}"
     session = "System"  # pane.session  # .session_name
     window = "Dev Utils"  # pane.window  # .name
     pane_name = 2
 
     tmux_args = f"{session}:{window}.{pane_name}"
-    # output = pane.send_keys(command, enter=True)
-    # print(f"Output: {output}")
 
-    # output = subprocess.run(
-    #    [build_command],
-    #    capture_output=True,
-    #    text=True,
-    # )
+    cmd_list = ["tmux", "send-keys", "-t", tmux_args, command, "Enter"]
 
     output = subprocess.run(
-        ["tmux", "send-keys", "-t", tmux_args, build_command, "Enter"],
+        cmd_list,
         capture_output=True,
         text=True,
     )
     return output
 
 
+# execute "terminal tmux setenv ACTIVE_SESSION" v:servername
+
+
+def tmux_send_enter(pane: Pane):
+    output = send_command_back_to_tmux(pane, "")
+    return output
+
+
 def set_tmux_env_var_from_nvim(
-    pane: Pane, env_var: str, value: str = "vim.fn.expand('%:p')"
+    pane: Pane,
+    env_var: str,
+    value: str = "echo v:servername",  # "vim.fn.expand('%:p')"
 ):
     output = set_nvim_active_file_env_var(pane, env_var, value)
     print(f"\nOutput1: {output}\n\n")
     output2 = send_command_back_to_tmux(
-        pane, f"terminal tmux setenv {env_var} ${env_var}"
+        pane, f":terminal tmux setenv {env_var} ${env_var}"
     )
+    sleep(0.1)
+    output3 = tmux_send_enter(pane)
+    print(f"\nOutput Enter: {output3}\n\n")
     # output2 = subprocess.run(
     #    ["terminal", "tmux", "setenv", env_var, f"${env_var}"],
     #    capture_output=True,
@@ -191,7 +205,11 @@ def get_active_files(session_name: str = None) -> List[Dict[str, str]]:
     #    dev_pane, "echo 'Hey'"
     # )  # "echo vim.fn.expand('%:p')")
     # output = set_nvim_active_file_env_var(dev_pane, "ACTIVE_FILE")
-    output = set_tmux_env_var_from_nvim(dev_pane, "ACTIVE_FILE3")
+
+    output = set_tmux_env_var_from_nvim(dev_pane, file_env_var)
+
+    # output = tmux_send_enter(dev_pane)
+
     # .communicate()[0])
     # output = dev_pane.send_keys(':terminal echo "vim.fn.expand(%:p)"', enter=True)
     print(f"\nOutput: {output}\n\n")
@@ -205,7 +223,7 @@ def get_active_files(session_name: str = None) -> List[Dict[str, str]]:
     # print(f"\nDifferent Attributes in Panes:")
     # for attr in different_attrs:
     #    print(f"    {attr}")
-
+    return
     # print_class_dict(dev_pane)
     for window in session.windows:
         # Print window object:

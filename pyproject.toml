@@ -4,11 +4,12 @@ version = "0.0.6"
 dynamic = ["dependencies"]
 
 [project.scripts]
-#config = "dev_utils.src.config:print_envs"
+config = "dev_utils.src.config:print_envs"
 #main = "dev_utils.src.main:main"
 bump-ver = "dev_utils.src.utils.version:app"
 init-gen = "dev_utils.src.utils.python.init_gen:app"
 tmux-script = "dev_utils.src.utils.tmux.script:script"
+get-buffers = "dev_utils.src.utils.nvim.buffers:main"
 
 [tool.setuptools.dynamic]
 dependencies = { file = "requirements.txt" }

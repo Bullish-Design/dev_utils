@@ -1,11 +1,9 @@
-#!/usr/bin/env python3
 from pynvim import attach
 import os
 import json
 from typing import List, Dict, Optional
 
-socket_path = "/run/user/1000/nvim.3054298.0"
-notes_socket = "/run/user/1000/"
+from dev_utils.src.utils.nvim.nvim_init import NVIM_SOCKET_DEV, NVIM_SOCKET_NOTES
 
 
 class NeovimBufferLister:
@@ -28,18 +26,18 @@ class NeovimBufferLister:
         Returns:
             Neovim instance
         """
-        env_list = os.environ
+        # env_list = os.environ
 
-        print(f"Environment variables:")
-        for k, v in env_list.items():
-            if ":" in v:
-                v = v.split(":")
-                print(f"\n   {k}:")
-                for val in v:
-                    print(f"      - {val}")
-            else:
-                print(f"\n   {k} = {v}")
-        print(f"\n\n")
+        # print(f"Environment variables:")
+        # for k, v in env_list.items():
+        #    if ":" in v:
+        #        v = v.split(":")
+        #        print(f"\n   {k}:")
+        #        for val in v:
+        #            print(f"      - {val}")
+        #    else:
+        #        print(f"\n   {k} = {v}")
+        # print(f"\n\n")
 
         if socket_path is None:
             socket_path = os.environ.get("NVIM_LISTEN_ADDRESS")
@@ -50,10 +48,15 @@ class NeovimBufferLister:
                 "Please either provide a socket path or ensure NVIM_LISTEN_ADDRESS is set."
             )
 
+        # print(f"Path 1: {socket_path.strip()}")
+        # print(f"Path 2: {os.path.join("",socket_path)}")
+
         if not os.path.exists(socket_path):
             raise FileNotFoundError(f"Neovim socket not found at {socket_path}")
 
-        return attach("socket", path=socket_path)
+        sesh = attach("socket", path=socket_path)
+        # print(f"\n\nSession: {sesh}\n\n")
+        return sesh
 
     def get_buffer_list(self) -> List[Dict[str, str]]:
         """
@@ -139,8 +142,9 @@ class NeovimBufferLister:
 def main():
     try:
         # Create buffer lister instance
-        buffer_lister = NeovimBufferLister(socket_path=socket_path)
+        buffer_lister = NeovimBufferLister(socket_path=NVIM_SOCKET_DEV)
 
+        print(f"\nBuffer_lister: {buffer_lister}\n")
         # Get and display buffer list
         buffers = buffer_lister.get_buffer_list()
 
